@@ -1,0 +1,5 @@
+networkx
+Cython
+numpy
+scipy
+tqdm

@@ -1,0 +1,2 @@
+for /l %%i in (1,1,50) do start python start_multiprocess.py --model_name Lattice_3D_4_5 --lattice_dim 3 --lattice_scale 4
+python parse_result_multiprocess.py --model_name Lattice_3D_4_5 --lattice_dim 3 --lattice_scale 4

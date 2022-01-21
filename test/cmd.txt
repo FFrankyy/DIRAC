@@ -1,0 +1,1 @@
+python gen_graph_only.py -save_dir ./ -max_n 20 -min_n 15 -num_graph 1 -p 0.00 -graph_type barabasi_albert -m 4
