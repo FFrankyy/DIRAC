@@ -386,6 +386,6 @@ def DIRAC_PT_beta():
 if __name__=="__main__":
 
     # DIRAC_1()
-    DIRAC_m()
+    # DIRAC_m()
     # DIRAC_PT_alpha()
     # DIRAC_PT_beta()
