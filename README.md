@@ -80,26 +80,26 @@ Modify the hyper-parameters in `SGRL.py` to tune the model, and make files after
 #### 2.1 Test using DIRAC^1 strategy
 (unannotate DIRAC_1() in the main function)
 ```
-CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2 (e.g.) (do not use GPU for test)
+(e.g.) CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2 (do not use GPU for test)
 ```
 Using the well-trained model (stored in `./models`), you can obtain the results reported in the paper.
 
 #### 2.2 Test using DIRAC^m strategy
 (unannotate DIRAC_m() in the main function)
 ```
-CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2
+(e.g.) CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2
 ```
 
 #### 2.3 Test using DIRAC_PT_alpha strategy
 (unannotate DIRAC_PT_alpha() in the main function)
 ```
-CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2 --test_scale 15 --numInits 1000 --gid 0
+(e.g.) CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2 --test_scale 15 --numInits 1000 --gid 0
 ```
 
 #### 2.4 Test using DIRAC_PT_beta strategy
 (unannotate DIRAC_PT_beta() in the main function)
 ```
-CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2 --test_scale 15 --numInits 1000 --gid 0
+(e.g.) CUDA_VISIBLE_DEVICES=-1 python test.py --lattice_dim 2 --test_scale 15 --numInits 1000 --gid 0
 ```
 
 ## Expected output
