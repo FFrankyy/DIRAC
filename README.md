@@ -20,7 +20,7 @@ Spin glasses are disordered magnets with random interactions that are, generally
 # Repo Contents
 
 - [DIRAC](./DIRAC): source codes of DIRAC.
-- [SA & PT](./SA & PT): implementation details of the two competing baseline algorithms.
+- [baselines](./baselines): implementation details of the two competing baseline algorithms.
 
 
 # System Requirements
