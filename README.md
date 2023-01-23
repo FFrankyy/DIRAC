@@ -15,16 +15,12 @@ Fan, C., Shen, M., Nussinov, Z., Liu, Z., Sun, Y and Liu Y-Y. [Searching for spi
 
 # Overview
 
-Spin glasses are disordered magnets with random interactions that are, generally, in conflict with each other. Finding the ground states of spin glasses is not only essential for understanding the nature of disordered magnets and many other physical systems, but also useful to solve a broad array of hard combinatorial optimization problems across multiple disciplines. Despite decades-long efforts, an algorithm with both high accuracy and high efficiency is still lacking. Here we introduce DIRAC-- a deep reinforcement learning framework, which can be trained purely on small-scale spin glass instances and then applied to arbitrarily large ones. DIRAC displays better scalability than other methods and can be leveraged to enhance any thermal annealing method. Extensive calculations on 2D, 3D and 4D Edwards-Anderson spin glass instances demonstrate the superior performance of DIRAC~over existing methods. The presented framework will help us better understand the nature of the low-temperature spin-glass phase, which is a fundamental challenge in statistical physics. Moreover, the gauge transformation technique adopted in DIRAC~builds a deep connection between physics and artificial intelligence. In particular, this opens up a promising avenue for reinforcement learning models to explore in the enormous configuration space, which would be extremely helpful to solve many other hard combinatorial optimization problems.
+Spin glasses are disordered magnets with random interactions that are, generally, in conflict with each other. Finding the ground states of spin glasses is not only essential for understanding the nature of disordered magnets and many other physical systems, but also useful to solve a broad array of hard combinatorial optimization problems across multiple disciplines. Despite decades-long efforts, an algorithm with both high accuracy and high efficiency is still lacking. Here we introduce DIRAC -- a deep reinforcement learning framework, which can be trained purely on small-scale spin glass instances and then applied to arbitrarily large ones. DIRAC displays better scalability than other methods and can be leveraged to enhance any thermal annealing method. Extensive calculations on 2D, 3D and 4D Edwards-Anderson spin glass instances demonstrate the superior performance of DIRAC over existing methods. The presented framework will help us better understand the nature of the low-temperature spin-glass phase, which is a fundamental challenge in statistical physics. Moreover, the gauge transformation technique adopted in DIRAC~builds a deep connection between physics and artificial intelligence. In particular, this opens up a promising avenue for reinforcement learning models to explore in the enormous configuration space, which would be extremely helpful to solve many other hard combinatorial optimization problems.
 
 # Repo Contents
 
-- [code](./code): source code of FINDER for the following four cases in the paper.
-     - [FINDER_CN](./code/FINDER_CN): source code for the Critical Node (CN) problem under the node-unweighted scenario.
-     - [FINDER_CN_cost](./code/FINDER_CN_cost): source code for the Critical Node (CN) problem under the node-weighted (including degree-based costs and random costs) scenarios.
-     - [FINDER_ND](./code/FINDER_ND): source code for the Network Dismantling (ND) problem under the node-unweighted scenario.
-     - [FINDER_ND_cost](./code/FINDER_ND_cost): source code for the Network Dismantling (ND) problem under the node-weighted (including degree-based costs and random costs) scenarios.
-- [results](./results): results obtained by FINDER for all the cases, which should be the same as are reported in the paper.
+- [DIRAC](./DIRAC): source codes of DIRAC.
+- [SA & PT](./SA & PT): implementation details of the two competing baseline algorithms.
 
 
 # System Requirements
