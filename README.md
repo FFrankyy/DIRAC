@@ -20,7 +20,7 @@ Spin glasses are disordered magnets with random interactions that are, generally
 # Repo Contents
 
 - [DIRAC](./DIRAC): source codes of DIRAC.
-- [baselines](./baselines): implementation details of the two competing baseline algorithms.
+- [baselines](./baselines): implementation details of Simulated Annealing (SA) and Parallel Temperaturing (PT).
 
 
 # System Requirements
@@ -51,7 +51,7 @@ The pip package should be compatible with Windows, and Linux operating systems.
 Before setting up the FINDER users should have `gcc` version 7.4.0 or higher.
 
 ## Hardware Requirements
-The `FINDER` model requires a standard computer with enough RAM and GPU to support the operations defined by a user. For minimal performance, this will be a computer with about 4 GB of RAM and 16GB of GPU. For optimal performance, we recommend a computer with the following specs:
+The `DIRAC` model requires a standard computer with enough RAM and GPU to support the operations defined by a user. For minimal performance, this will be a computer with about 4 GB of RAM and 16GB of GPU. For optimal performance, we recommend a computer with the following specs:
 
 RAM: 16+ GB  
 CPU: 4+ cores, 3.3+ GHz/core
