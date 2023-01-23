@@ -80,9 +80,9 @@ It took about 5 mins to install all the required packages, and about 1 mins to m
 ## Instructions to run
 1. Train the model, 
 ```
-CUDA_VISIBLE_DEVICES=gpu_id python train.py
+CUDA_VISIBLE_DEVICES=gpu_id python train.py --lattice_dim DIM --lattice_num_min NUM_MIN, --lattice_num_max NUM_MAX
 ```
-Modify the hyper-parameters in `FINDER.pyx` to tune the model, and make files after the the modification.
+Modify the hyper-parameters in `SGRL.py` to tune the model, and make files after the the modification.
 
 2. Test synthetic data,
 ```
