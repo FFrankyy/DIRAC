@@ -27,6 +27,7 @@ def parsers():
     parser.add_argument('--n_step', type=int, default=3, help='n-step Q updates')
     parser.add_argument('--node_feat_init', type=int, default=3, help='dimension of node input features')
     parser.add_argument('--edge_feat_init', type=int, default=4, help='dimension of edge input features')
+    parser.add_argument('--PE_dim', type=int, default=10, help='dimension of position encoding')  #
     parser.add_argument('--batch_size', type=int, default=16, help='batch size for training')
     parser.add_argument('--n_valid', type=int, default=100, help='number of validation instances')
     parser.add_argument('--num_env', type=int, default=1, help='number of envs')

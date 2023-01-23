@@ -94,6 +94,7 @@ class SGRL:
     def BuildNet(self):
         ############## params define
         # [node_dim, embed_dim]
+        #w_n2l = tf.Variable(tf.truncated_normal([args.lattice_dim*args.PE_dim, args.embed_dim], stddev=0.01), tf.float32)
         w_n2l = tf.Variable(tf.truncated_normal([args.lattice_dim, args.embed_dim], stddev=0.01), tf.float32)
         # [edge_dim, embed_dim]
         w_e2l = tf.Variable(tf.truncated_normal([args.edge_feat_init, args.embed_dim], stddev=0.01), tf.float32)
@@ -339,7 +340,7 @@ class SGRL:
     def SetupTrain(self, idxes, g_list, covered, actions, target):
         self.inputs['label'] = target
         prepareBatchGraph = PrepareBatchGraph.py_PrepareBatchGraph(args.aggregatorID)
-        prepareBatchGraph.SetupTrain(idxes, g_list, covered, actions, args.PE_dim)
+        prepareBatchGraph.SetupTrain(idxes, g_list, covered, actions)
         self.inputs['action_select'] = prepareBatchGraph.act_select
         self.inputs['rep_global'] = prepareBatchGraph.rep_global
         self.inputs['n2egsum_param'] = prepareBatchGraph.n2esum_param
