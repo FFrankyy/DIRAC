@@ -82,17 +82,29 @@ It took about 5 mins to install all the required packages, and about 1 mins to m
 ```
 CUDA_VISIBLE_DEVICES=gpu_id python train.py --lattice_dim DIM --lattice_num_min NUM_MIN, --lattice_num_max NUM_MAX
 ```
-Modify the hyper-parameters in `SGRL.py` to tune the model, and make files after the the modification.
+Modify the hyper-parameters in `config.py` to train the model.
 
-2. Test synthetic data,
+2. Test using DIRAC^1 strategy,
 ```
-CUDA_VISIBLE_DEVICES=-1 python testSynthetic.py (do not use GPU for test)
+CUDA_VISIBLE_DEVICES=-1 python DIRAC1_test.py --lattice_dim DIM --test_scale SCALE (do not use GPU for test)
+```
+We provide the well-trained model (stored in `./models`), you can obtain the results reported in the paper. You can also specify the specific gpu_id to speed up the test with GPU.
+
+3. Test using DIRAC^m strategy,
+```
+CUDA_VISIBLE_DEVICES=-1 python DIRACm_test.py --lattice_dim DIM --test_scale SCALE (do not use GPU for test)
 ```
 Using the well-trained model (stored in `./models`), you can obtain the results reported in the paper.
 
-3. Test real data,
+4. Test using DIRAC-SA strategy,
 ```
-CUDA_VISIBLE_DEVICES=-1 python testReal.py (do not use GPU for test)
+CUDA_VISIBLE_DEVICES=-1 python DIRAC-SA_test.py --lattice_dim DIM --test_scale SCALE --gid LATTICE_ID (do not use GPU for test)
+```
+Using the well-trained model (stored in `./models`), you can obtain the results reported in the paper.
+
+5. Test using DIRAC-PT strategy,
+```
+CUDA_VISIBLE_DEVICES=-1 python DIRAC-PT_test.py --lattice_dim DIM --test_scale SCALE --args.numInits NUM_EPOCH --args.gid LATTICE_ID (do not use GPU for test)
 ```
 Using the well-trained model (stored in `./models`), you can obtain the results reported in the paper.
 
