@@ -2,7 +2,7 @@
 
 This is a TensorFlow implementation of DIRAC, as described in our paper:
 
-Fan, C., Shen, M., Nussinov, Z., Liu, Z., Sun, Y and Liu Y-Y. [Searching for spin glass ground states through deep reinforcement]. Nat. Commun. (2023). ![demo](https://github.com/FFrankyy/FINDER/blob/master/paper/FINDER-Overview.jpg)
+Fan, C., Shen, M., Nussinov, Z., Liu, Z., Sun, Y and Liu Y-Y. [Searching for spin glass ground states through deep reinforcement]. Nat. Commun. (2023). ![demo]([https://github.com/FFrankyy/FINDER/blob/master/paper/FINDER-Overview.jpg](https://github.com/FFrankyy/DIRAC/blob/main/Paper/Featured_Image_NC.png))
 
 ## Contents
 
