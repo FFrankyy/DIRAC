@@ -21,14 +21,8 @@ import copy
 import graph
 import os
 from config import parsers
-# from gurobipy import *
 
-# torch.manual_seed(1)    # reproducibl
 args = parsers()
-
-# reproducible setting
-# np.random.seed(10)
-
 
 # random Ising model: maximize (\sum_\sigma_i*\sigma_j*S_ij - \sum h_i * S_i)
 class SGRL:
@@ -50,7 +44,6 @@ class SGRL:
         # self.nStepReplayMem=NStepReplayMem(MEMORY_SIZE)
         self.nStepReplayMem = nstep_replay_mem.py_NStepReplayMem(args.memory_size)
 
-        # cdef int i
         for i in range(args.num_env):
             self.env_list.append(maxcut_env.py_MaxcutEnv())
             self.covered.append(-1)
@@ -62,8 +55,6 @@ class SGRL:
         self.action_select = tf.sparse_placeholder(tf.float32, name="action_select")
         # [node_cnt, batch_size]
         self.rep_global = tf.sparse_placeholder(tf.float32, name="rep_global")
-        # [node_cnt, node_cnt]
-        # self.n2nsum_param = tf.sparse_placeholder(tf.float32, name="n2nsum_param")
         # [edge_cnt, node_cnt]
         self.n2esum_param = tf.sparse_placeholder(tf.float32, name="n2esum_param")
         # [node_cnt, edge_cnt]
@@ -103,7 +94,6 @@ class SGRL:
     def BuildNet(self):
         ############## params define
         # [node_dim, embed_dim]
-        #w_n2l = tf.Variable(tf.truncated_normal([args.lattice_dim*args.PE_dim, args.embed_dim], stddev=0.01), tf.float32)
         w_n2l = tf.Variable(tf.truncated_normal([args.lattice_dim, args.embed_dim], stddev=0.01), tf.float32)
         # [edge_dim, embed_dim]
         w_e2l = tf.Variable(tf.truncated_normal([args.edge_feat_init, args.embed_dim], stddev=0.01), tf.float32)
@@ -126,13 +116,6 @@ class SGRL:
         # [reg_hidden, 1]
         h2_weight = tf.Variable( tf.truncated_normal([args.embed_dim, args.reg_hidden], stddev=0.01), tf.float32)
         last_w = tf.Variable(tf.truncated_normal([args.reg_hidden, 1], stddev=0.01), tf.float32)
-
-        # # doct product
-        # self.last_w = tf.Variable(tf.truncated_normal([args.embed_dim, 1], stddev=0.01), tf.float32)
-
-        # # Neural Tensor Network, NTN
-        # self.WR = tf.Variable(tf.truncated_normal([args.embed_dim, args.embed_dim], stddev=0.01), tf.float32)
-        # self.VR = tf.Variable(tf.truncated_normal([2*args.embed_dim, 1], stddev=0.01), tf.float32)
 
         ############# get embeddings
         # [node_cnt, node_dim] * [node_dim, embed_dim] = [node_cnt, embed_dim], no sparse
@@ -198,24 +181,6 @@ class SGRL:
         # [batch_size, reg_hidden] * [reg_hidden, 1] = [batch_size, 1]
         q_pred = tf.matmul(last_output, last_w)
 
-        # # dot product
-        # # [batch_size, embed_dim]
-        # embed_s_a = self.y_potential * action_embed
-        # # [batch_size, embed_dim] * [embed_dim, 1] = [batch_size, 1]
-        # q_pred = tf.matmul(last_output, last_w)
-
-        # # Neural Tensor Network Q
-        # # [batch_size, embed_dim] * [embed_dim, embed_dim] = [batch_size, embed_dim]
-        # sw = tf.matmul(self.y_potential, self.WR)
-        # # [batch_size, 1]
-        # swa = tf.sum(sw * action_embed, 1)
-        # # [batch_size, 1]
-        # ntn1 = tf.reshape(swa, [-1,1])
-        # # [batch_size, 1]
-        # ntn2 = tf.matmul(tf.concat([self.y_potential, action_embed], 1), self.VR)
-        # # [batch_size, 2*embed_dim] * [2*embed_dim, 1] = [batch_size, 1]
-        # q_pred = tf.tanh(tf.add(ntn1, ntn2))
-
         if self.IsHuberLoss:
             loss = tf.losses.huber_loss(self.label, q_pred)
         else:
@@ -234,23 +199,6 @@ class SGRL:
         last_output = hidden2
         # [node_cnt, reg_hidden] * [reg_hidden, 1] = [node_cnt, 1]
         q_on_all = tf.matmul(last_output, last_w)
-
-        # # dot product
-        # # [node_nct, embed_dim]
-        # embed_s_a_all = rep_y * cur_node_embed
-        # # [node_cnt, embed_dim] * [embed_dim, 1] = [node_cnt, 1]
-        # q_on_all = tf.matmul(embed_s_a_all,last_w)
-
-        # # # Neural Tensor Network Q
-        # # [node_cnt, embed_dim] * [embed_dim, embed_dim] = [node_cnt, embed_dim]
-        # sw_all = tf.matmul(rep_y, WR)
-        # # [node_cnt, 1]
-        # swa_all = tf.sum(sw_all * self.cur_node_embed, 1)
-        # # [node_cnt, 1]
-        # ntn1_all = tf.reshape(swa_all, (-1, 1))
-        # # [node_cnt, 1]
-        # ntn2_all = tf.matmul(tf.cat([rep_y, self.cur_node_embed], 1), VR)
-        # q_on_all = tf.tanh(tf.add(ntn1_all, ntn2_all))
 
         return loss, trainStep, q_pred, q_on_all, tf.trainable_variables()
     #pass
@@ -349,36 +297,16 @@ class SGRL:
     def PrepareValidData(self):
         print('\ngenerating validation graphs...')
         self.gnx_valid_list = []
-        #self.bench_gurobi = []
-        #path = './test/validation/%s/%dD/%d_%d'%(args.g_type, args.lattice_dim, args.lattice_num_min, args.lattice_num_max)
-        #for line in open('%s/Gurobi_res.txt'%(path), 'r'):
-        #    self.bench_gurobi.append(float(line.strip('')))
-        #print (np.mean(self.bench_gurobi))
         self.bench_greedy = []
         for i in tqdm(range(args.n_valid)):
             # # # generate during this training
             g = self.gen_graph(args.g_type)
-
-            # read from file
-            #g_temp = nx.read_gml('%s/%d.gml'%(path, i))
-            #g = nx.Graph()
-            #for node in g_temp.nodes():
-            #    g.add_node(int(node))
-            #    g.nodes[int(node)]['state'] = g_temp.nodes[node]['state']
-            #    g.nodes[int(node)]['coords'] = g_temp.nodes[node]['coords']
-            #for edge in g_temp.edges():
-            #    g.add_edge(int(edge[0]), int(edge[1]))
-            #    g[int(edge[0])][int(edge[1])]['weight'] = g_temp[edge[0]][edge[1]]['weight']
-
             self.gnx_valid_list.append(g)
             res_greedy = self.greedySearch(g)
             self.bench_greedy.append(res_greedy)
             self.InsertGraph(g, is_test=True)
 
     def Run_simulator(self, num_seq, eps, TrainSet, n_step):
-        # cdef int num_env = len(self.env_list)
-        # cdef int n = 0
-        # cdef int i
         args.num_env = len(self.env_list)
         n = 0
         while n < num_seq:
@@ -404,7 +332,7 @@ class SGRL:
                 else:
                     a_t = np.argmax(pred[i])
                 self.env_list[i].step(a_t)
-    #pass
+
     def PlayGame(self, n_traj, eps):
         self.Run_simulator(n_traj, eps, self.TrainSet, args.n_step)
 
@@ -414,7 +342,6 @@ class SGRL:
         prepareBatchGraph.SetupTrain(idxes, g_list, covered, actions, args.PE_dim)
         self.inputs['action_select'] = prepareBatchGraph.act_select
         self.inputs['rep_global'] = prepareBatchGraph.rep_global
-        # self.inputs['n2nsum_param'] = prepareBatchGraph.n2nsum_param
         self.inputs['n2egsum_param'] = prepareBatchGraph.n2esum_param
         self.inputs['e2nsum_param'] = prepareBatchGraph.e2nsum_param
         self.inputs['subgsum_param'] = prepareBatchGraph.subgsum_param
@@ -425,17 +352,14 @@ class SGRL:
         prepareBatchGraph = PrepareBatchGraph.py_PrepareBatchGraph(args.aggregatorID)
         prepareBatchGraph.SetupPredAll(idxes, g_list, covered, args.PE_dim)
         self.inputs['rep_global'] = prepareBatchGraph.rep_global
-        # self.inputs['n2nsum_param'] = prepareBatchGraph.n2nsum_param
         self.inputs['n2esum_param'] = prepareBatchGraph.n2esum_param
         self.inputs['e2nsum_param'] = prepareBatchGraph.e2nsum_param
         self.inputs['subgsum_param'] = prepareBatchGraph.subgsum_param
         self.inputs['node_input'] = prepareBatchGraph.node_feat
         self.inputs['edge_input'] = prepareBatchGraph.edge_feat
-        # print(prepareBatchGraph.idx_map_list)
 
     def Predict(self, g_list, covered, isSnapSnot):
         n_graphs = len(g_list)
-        # cdef int i, j, k
         for i in range(0, n_graphs, args.batch_size):
             bsize = args.batch_size
             if (i + args.batch_size) > n_graphs:
@@ -451,7 +375,6 @@ class SGRL:
             if isSnapSnot:
                 result = self.session.run([self.q_on_allT], feed_dict={
                     self.rep_global: self.inputs['rep_global'],
-                    # self.n2nsum_param: self.inputs['n2nsum_param'],
                     self.n2esum_param: self.inputs['n2esum_param'],
                     self.e2nsum_param: self.inputs['e2nsum_param'],
                     self.subgsum_param: self.inputs['subgsum_param'],
@@ -461,7 +384,6 @@ class SGRL:
             else:
                 result = self.session.run([self.q_on_all], feed_dict={
                     self.rep_global: self.inputs['rep_global'],
-                    # self.n2nsum_param: self.inputs['n2nsum_param'],
                     self.n2esum_param: self.inputs['n2esum_param'],
                     self.e2nsum_param: self.inputs['e2nsum_param'],
                     self.subgsum_param: self.inputs['subgsum_param'],
@@ -491,7 +413,6 @@ class SGRL:
        self.session.run(self.UpdateTargetQNetwork)
 
     def Fit(self, iter):
-        # cdef int i
         sample = self.nStepReplayMem.Sampling(args.batch_size)
         ness = False
         for i in range(args.batch_size):
@@ -533,7 +454,6 @@ class SGRL:
         return loss, train_greedy, train_greedy_improve
 
     def fit(self, g_list, covered, actions, list_target, iter):
-        # cdef int i, j
         loss = 0
         n_graphs = len(g_list)
         for i in range(0,n_graphs, args.batch_size):
@@ -549,7 +469,6 @@ class SGRL:
             result = self.session.run([self.loss, self.trainStep],feed_dict={
                                         self.action_select : self.inputs['action_select'],
                                         self.rep_global : self.inputs['rep_global'],
-                                        # self.n2nsum_param : self.inputs['n2nsum_param'],
                                         self.n2esum_param: self.inputs['n2esum_param'],
                                         self.e2nsum_param: self.inputs['e2nsum_param'],
                                         self.subgsum_param: self.inputs['subgsum_param'],
@@ -558,11 +477,10 @@ class SGRL:
                                         self.label : self.inputs['label']})
             loss += result[0]*bsize
         return loss / len(g_list)
-    #pass
+    
     def Train(self):
         self.PrepareValidData()
         self.gen_new_graphs()
-        # cdef int i, iter, idx
         for i in range(10):
             self.PlayGame(100, 1)
         self.TakeSnapShot()
@@ -576,7 +494,6 @@ class SGRL:
             os.mkdir(save_dir)
         VCFile = '%s/%s_ModelVC_%d_%d.csv'%(save_dir, args.model_name, args.lattice_num_min, args.lattice_num_max)
         f_out = open(VCFile, 'w')
-        #f_out.write('train_greedy, train_greedy_improve, valid_greedy, valid_greedy_improve, valid_gurobi, valid_gurobi_improve\n')
         f_out.write('train_greedy, train_greedy_improve, valid_greedy, valid_greedy_improve\n')
         current_greedy_best, best_iter = 0.0, 0 # record the best result until now
         
@@ -608,15 +525,10 @@ class SGRL:
 
                     valid_greedy += val / self.bench_greedy[idx] / args.n_valid
                     valid_greedy_improve += val_improve / self.bench_greedy[idx] / args.n_valid
-                    #valid_gurobi += val / self.bench_gurobi[idx] / args.n_valid
-                    #valid_gurobi_improve += val_improve / self.bench_gurobi[idx] / args.n_valid
                 test_end = time.time()
-                #f_out.write('%.4f, %.4f, %.4f, %.4f, %.4f, %.4f\n'%(train_greedy, train_greedy_improve, valid_greedy, valid_greedy_improve, valid_gurobi, valid_gurobi_improve))   #write vc into the file
                 f_out.write('%.4f, %.4f, %.4f, %.4f\n'%(train_greedy, train_greedy_improve, valid_greedy, valid_greedy_improve)) 
                 f_out.flush()
                 print('Iter:%d, eps:%.4f, Loss:%.6f'%(iter, eps, loss))
-                #print('train_greedy(improve):%.4f(%.4f), valid_greedy(improve):%.4f(%.4f), valid_gurobi(improve:%.4f(%.4f))'
-                #        %(train_greedy, train_greedy_improve, valid_greedy, valid_greedy_improve, valid_gurobi, valid_gurobi_improve))
                 print('train_greedy(improve):%.4f(%.4f), valid_greedy(improve):%.4f(%.4f)'%(train_greedy, train_greedy_improve, valid_greedy, valid_greedy_improve))
                 # print the current best ratio result
                 if iter > 5000 and current_greedy_best < valid_greedy:
@@ -660,10 +572,8 @@ class SGRL:
         self.test_env.s0(self.TestSet.Get(gid))
         g_list.append(self.test_env.graph)
         initial = copy.deepcopy(self.test_env.graph.node_state) # initial node states
-        # norm = self.test_env.graph.total_abs_weight
         norm = self.test_env.graph.num_edges
         init_energy = self.test_env.graph.init_energy
-        # cost = 0.0  # max cut
         cost = init_energy  # spin glass
         best, length = cost, 0
         best_len = -1
@@ -700,7 +610,6 @@ class SGRL:
         g_list.append(self.test_env.graph)
 
         initial = copy.deepcopy(self.test_env.graph.node_state) # initial node states
-        # norm = self.test_env.graph.total_abs_weight
         norm = self.test_env.graph.num_edges
         init_energy = self.test_env.graph.init_energy
 
@@ -708,7 +617,6 @@ class SGRL:
         best, length = cost, 0
         best_len = -1
         sol, sol_all = [], []
-        # print ('#####################################    开始选择节点       #########################################')
         while (not self.test_env.isTerminal()):
             list_pred = self.Predict(g_list, [self.test_env.action_list], False)
             batchSol = np.argsort(-list_pred[0])[:step]
@@ -732,11 +640,10 @@ class SGRL:
         assert(len(current_node_states) == len(initial))
         return best/num_node, current_node_states, sol, sol_all
 
-    #pass
     def SaveModel(self, model_path):
         self.saver.save(self.session, model_path)
         print('model has been saved success!')
-    #pass
+    
     def LoadModel(self, model_path):
         self.saver.restore(self.session, model_path)
         print('restore model from file successfully')
@@ -822,29 +729,3 @@ class SGRL:
                     g.add_edge(edge_src, edge_tgt)
                     g[edge_src][edge_tgt]['weight'] = adj_list[i][j][1]
         return g
-
-    # def getGuroSol(self, g):
-    #     nodes = nx.nodes(g)
-    #     edges = nx.edges(g)
-    #     try:
-    #         # Create a new model
-    #         m = Model("Spin Glass")
-    #         m.setParam('TimeLimit', 3600)  # 设置运行时间
-    #         # m.Params.timelimit = 3600
-    #         # m.Params.MIPFocus = 1
-    #         m.setParam('Threads', 10)  # 设置线程
-    #         # Create variables
-    #         nodesVar = {}
-    #         for i, node in enumerate(nodes):
-    #             nodesVar[i] = m.addVar(vtype=GRB.BINARY, name=str(node))
-    #         # Set objective
-    #         # ### maxcut
-    #         # m.setObjective(quicksum([g[edge[0]][edge[1]]['weight']*(nodesVar[edge[0]]+nodesVar[edge[1]])*(2-nodesVar[edge[0]]-nodesVar[edge[1]]) for edge in edges]), GRB.MAXIMIZE)
-    #         ## spin glass
-    #         m.setObjective(quicksum([g[edge[0]][edge[1]]['weight'] * (2*nodesVar[edge[0]]-1)*(2*nodesVar[edge[1]] - 1) for edge in edges]), GRB.MAXIMIZE)
-    #         # optimize
-    #         m.optimize()
-    #     except GurobiError as e:
-    #         print('Error code ' + str(e.errno) + ": " + str(e))
-    #     return m.objVal
-
