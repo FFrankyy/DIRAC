@@ -84,13 +84,13 @@ CUDA_VISIBLE_DEVICES=gpu_id python train.py --lattice_dim DIM --lattice_num_min 
 ```
 Modify the hyper-parameters in `config.py` to train the model.
 
-2. Test using DIRAC$^1$ strategy,
+2. Test using $DIRAC^1$ strategy,
 ```
 CUDA_VISIBLE_DEVICES=-1 python DIRAC1_test.py --lattice_dim DIM --test_scale SCALE (do not use GPU for test)
 ```
 We provide the well-trained model (stored in `./models`), you can obtain the results reported in the paper. You can also specify the specific gpu_id to speed up the test with GPU.
 
-3. Test using DIRAC$^m$ strategy,
+3. Test using $DIRAC^m$ strategy,
 ```
 CUDA_VISIBLE_DEVICES=-1 python DIRACm_test.py --lattice_dim DIM --test_scale SCALE (do not use GPU for test)
 ```
@@ -115,7 +115,9 @@ We compared with two competitive annealing-based algorithms, Simulated Annealing
 The input always contains a matrix $J_{ij}$ that describes interaction between site $i$ and site $j$. There are also other arguments, such as random seed, or initial state as a vector.
 
 The parameters of these two algorithms are from:
+
     SA: https://arxiv.org/abs/1412.2104
+    
     PT: https://arxiv.org/abs/0806.1054
     
 These codes are written by different people (or same person in different time) so the coding styles might look different.
