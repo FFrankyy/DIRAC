@@ -84,13 +84,13 @@ CUDA_VISIBLE_DEVICES=gpu_id python train.py --lattice_dim DIM --lattice_num_min 
 ```
 Modify the hyper-parameters in `config.py` to train the model.
 
-2. Test using DIRAC^1 strategy,
+2. Test using DIRAC$^1$ strategy,
 ```
 CUDA_VISIBLE_DEVICES=-1 python DIRAC1_test.py --lattice_dim DIM --test_scale SCALE (do not use GPU for test)
 ```
 We provide the well-trained model (stored in `./models`), you can obtain the results reported in the paper. You can also specify the specific gpu_id to speed up the test with GPU.
 
-3. Test using DIRAC^m strategy,
+3. Test using DIRAC$^m$ strategy,
 ```
 CUDA_VISIBLE_DEVICES=-1 python DIRACm_test.py --lattice_dim DIM --test_scale SCALE (do not use GPU for test)
 ```
@@ -109,29 +109,16 @@ CUDA_VISIBLE_DEVICES=-1 python DIRAC-PT_test.py --lattice_dim DIM --test_scale S
 Using the well-trained model (stored in `./models`), you can obtain the results reported in the paper.
 
 
-## Expected output
-The experimental results are saved in the `results` folder, which contains four subfolders, each of which corresponds to one model, and the synthetic and real results are separated into two different subfolders for the sake of clearity.
-
-## Expected run time
-It took about 17 hours to obtain all results, including 'FINDER_CN', 'FINDER_CN_cost', 'FINDER_ND' and 'FINDER_ND_cost' four models, on both synthetic data and real data, containing both node uniform weights, degree-based weights and random weights.
-
-
 # Basebline methods implementation
-We compared with HDA, HBA, HCA, HPRA, CI, MinSum, BPD, GND and RatioCut, which are state-of-the-art baselines for network key players finding methods.
+We compared with two competitive annealing-based algorithms, Simulated Annealing (SA) and Parallel Temperaturing (PT). We provide our implementations of these two algorithms, which are stored in `./baselines`.
 
-We ran HDA, HBA, HCA, and HPRA with Networkx 2.0, and for HDA in large real-world networks, we instead used SNAP, a general-purpose, high-performance system for graph analysis. 
-```
-http://snap.stanford.edu/snap 
-```
+The input always contains a matrix $J_{ij}$ that describes interaction between site $i$ and site $j$. There are also other arguments, such as random seed, or initial state as a vector.
 
-We used the source codes released online, and adopted the best parameter settings for each method. For RatioCut, we modified the traditional RatioCut method based on the GND implementation.
-```
-https://github.com/zhfkt/ComplexCi (CI)
-https://github.com/abraunst/decycler (MinSum)
-http://power.itp.ac.cn/~zhouhj/codes.html (BPD)
-https://github.com/hcmidt/corehd (CoreHD)
-https://github.com/renxiaolong/Generalized-Network-Dismantling (GND and RatioCut)
-```
+The parameters of these two algorithms are from:
+    SA: https://arxiv.org/abs/1412.2104
+    PT: https://arxiv.org/abs/0806.1054
+    
+These codes are written by different people (or same person in different time) so the coding styles might look different.
 
 # Reproducing the results that reported in the paper
 
